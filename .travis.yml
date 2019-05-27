@@ -1,0 +1,8 @@
+---
+matrix:
+  include:
+  -
+    before_install: cd frontend
+    language: node_js
+    node_js:
+      - "10"
