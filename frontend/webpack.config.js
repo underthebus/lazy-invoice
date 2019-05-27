@@ -15,6 +15,8 @@ module.exports = {
   ],
   stats: {
     all: false,
+    errors: true,
+    errorDetails: true,
     performance: true,
     builtAt: true,
   },
