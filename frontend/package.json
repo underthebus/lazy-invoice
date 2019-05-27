@@ -7,6 +7,7 @@
     "develop": "webpack-dev-server",
     "lint": "eslint .",
     "test": "jest",
+    "test-e2e": "testcafe \"chrome:headless\" e2e/**",
     "build": "webpack"
   },
   "dependencies": {
@@ -33,6 +34,8 @@
     "enzyme-to-json": "^3.3.5",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-testcafe": "^0.2.1",
+    "testcafe": "^1.1.4",
     "jest": "^24.8.0"
   }
 }
