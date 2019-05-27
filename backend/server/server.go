@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/underthebus/lazy-invoice/backend/graphql"
+	"github.com/underthebus/lazy-invoice/backend/store"
 )
 
 const defaultPort = "8081"
@@ -18,7 +19,17 @@ func main() {
 	}
 
 	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
-	http.Handle("/query", handler.GraphQL(graphql.NewExecutableSchema(graphql.Config{Resolvers: &graphql.Resolver{}})))
+	store := store.NewInMemoryStore()
+	http.Handle(
+		"/query",
+		handler.GraphQL(
+			graphql.NewExecutableSchema(
+				graphql.Config{
+					Resolvers: graphql.NewResolver(store),
+				},
+			),
+		),
+	)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
