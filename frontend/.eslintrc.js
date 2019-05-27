@@ -7,7 +7,8 @@ module.exports = {
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:testcafe/recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -22,7 +23,8 @@ module.exports = {
   },
   "plugins": [
     "react",
-    "jest"
+    "jest",
+    "testcafe"
   ],
   "settings": {
     "react": {

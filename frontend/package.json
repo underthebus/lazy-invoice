@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "develop": "webpack-dev-server",
-    "lint": "eslint .",
-    "test": "jest",
+    "test": "run-s -sn test:**",
+    "test:lint": "eslint .",
+    "test:unit": "jest",
+    "test:e2e": "testcafe -a webpack-dev-server \"chrome:headless\" e2e/**",
     "build": "webpack"
   },
   "dependencies": {
@@ -29,10 +31,13 @@
   "devDependencies": {
     "babel-jest": "^24.8.0",
     "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.13.1",
+    "enzyme-adapter-react-16": "^1.13.2",
     "enzyme-to-json": "^3.3.5",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.13.0",
-    "jest": "^24.8.0"
+    "eslint-plugin-testcafe": "^0.2.1",
+    "jest": "^24.8.0",
+    "npm-run-all": "^4.1.5",
+    "testcafe": "^1.1.4"
   }
 }
