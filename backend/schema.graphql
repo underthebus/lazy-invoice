@@ -1,28 +1,151 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
+# Schema definitions for lazy-invoice GraphQL API.
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
+# TODO: authentication, authorization, audit tables, de-normalized
+# generated past invoices, more mutations and more queries.
 
-type User {
-  id: ID!
-  name: String!
-}
+scalar Time
 
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  invoices: [Invoice!]!
+  customers: [Customer!]!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createInvoice(invoice: NewInvoice!): Invoice!
+  editInvoice(invoice: EditInvoice!): Invoice!
+  deleteInvoice(id: ID!): ID!
+  createCustomer(customer: NewCustomer!): Customer!
+  editCustomer(customer: EditCustomer!): Customer!
+  deleteCustomer(id: ID!): ID!
+  # TODO: organization creation, AKA registration.
+}
+
+# Invoice represents a single invoice. TODO: Add audit trail for who,
+# when, what. This applies to all relevant models.
+type Invoice {
+  id: ID!
+  # A user provided string identifier to display at the invoice.
+  identifier: String!
+  # Timestamp for display at the invoice.
+  date: Time!
+  # Organization that issues the invoice.
+  from: Organization!
+  # Recipient for the invoice.
+  to: Customer!
+  items: [InvoiceItem!]!
+}
+
+# InvoiceItem represents an item described in a given invoice.
+type InvoiceItem {
+  id: ID!
+  # Human readable description, may also contain the unit
+  # specification (hour, kilograms, etc).
+  description: String!
+  # Decimal value for unitary price.
+  unitPrice: String!
+  # Decimal value for the quantity.
+  quantity: String!
+}
+
+# Organization represents the relevant metadata for an issuer of an
+# invoice. It may have one or more users assigned to different roles.
+type Organization {
+  id: ID!
+  address: String!
+  email: String!
+  # TODO: add logo
+  name: String!
+  phone: String!
+  roles: [Role!]!
+  taxId: String!
+}
+
+# User describes the User metadata.
+type User {
+  id: ID!
+  email: String!
+  name: String!
+}
+
+# RoleAccess describes the different role access level that exist on
+# the system.
+enum RoleAccess {
+  ADMIN
+  READ
+  WRITE
+}
+
+# Role maps an access level to a user.
+type Role {
+  user: User!
+  access: RoleAccess!
+}
+
+# Customer represents the relevant metadata for a recipient of an
+# invoice.
+type Customer {
+  id: ID!
+  address: String!
+  email: String!
+  name: String!
+  phone: String!
+  taxId: String!
+}
+
+# NewCustomer describes the required input to create new customers.
+input NewCustomer {
+  address: String!
+  email: String!
+  name: String!
+  phone: String!
+  taxId: String!
+}
+
+# EditCustomer describes the required input to update a customer.
+input EditCustomer {
+  id: ID!
+  address: String
+  email: String
+  name: String
+  phone: String
+  taxId: String
+}
+
+# NewInvoice describes the required input to create new invoices.
+input NewInvoice {
+  # Human readable free form identifier for the invoice.
+  identifier: String!
+  # XXX: it'd be great to be able to define a customer ID or a
+  # customer object to create but input unions are still being
+  # defined: https://github.com/graphql/graphql-spec/issues/488
+  customerId: ID!
+  date: Time!
+  organizationId: ID!
+  items: [NewInvoiceItem!]!
+}
+
+# NewInvoiceItem describes the required input items of a new invoice.
+input NewInvoiceItem {
+  # Human readable description, may also contain the unit
+  # specification (hour, kilograms, etc).
+  description: String!
+  # Decimal value for unitary price.
+  unitPrice: String!
+  # Decimal value for the quantity.
+  quantity: String!
+}
+
+# EditInvoice describes the required input for editing an
+# invoice. Values are optional an no value means no change.
+input EditInvoice {
+  id: ID!
+  # Human readable free form identifier for the invoice.
+  identifier: String
+  # XXX: it'd be great to be able to define a customer ID or a
+  # customer object to create but input unions are still being
+  # defined: https://github.com/graphql/graphql-spec/issues/488
+  customerId: ID
+  date: Time
+  organizationId: ID
+  items: [NewInvoiceItem!]
 }
