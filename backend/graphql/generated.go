@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -43,32 +44,78 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Customer struct {
+		Address func(childComplexity int) int
+		Email   func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Phone   func(childComplexity int) int
+		TaxID   func(childComplexity int) int
+	}
+
+	Invoice struct {
+		Date       func(childComplexity int) int
+		From       func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Identifier func(childComplexity int) int
+		Items      func(childComplexity int) int
+		To         func(childComplexity int) int
+	}
+
+	InvoiceItem struct {
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Quantity    func(childComplexity int) int
+		UnitPrice   func(childComplexity int) int
+	}
+
 	Mutation struct {
-		CreateTodo func(childComplexity int, input models.NewTodo) int
+		CreateCustomer func(childComplexity int, customer models.NewCustomer) int
+		CreateInvoice  func(childComplexity int, invoice models.NewInvoice) int
+		DeleteCustomer func(childComplexity int, id string) int
+		DeleteInvoice  func(childComplexity int, id string) int
+		EditCustomer   func(childComplexity int, customer models.EditCustomer) int
+		EditInvoice    func(childComplexity int, invoice models.EditInvoice) int
+	}
+
+	Organization struct {
+		Address func(childComplexity int) int
+		Email   func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Phone   func(childComplexity int) int
+		Roles   func(childComplexity int) int
+		TaxID   func(childComplexity int) int
 	}
 
 	Query struct {
-		Todos func(childComplexity int) int
+		Customers func(childComplexity int) int
+		Invoices  func(childComplexity int) int
 	}
 
-	Todo struct {
-		Done func(childComplexity int) int
-		ID   func(childComplexity int) int
-		Text func(childComplexity int) int
-		User func(childComplexity int) int
+	Role struct {
+		Access func(childComplexity int) int
+		User   func(childComplexity int) int
 	}
 
 	User struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
+		Email func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Name  func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
-	CreateTodo(ctx context.Context, input models.NewTodo) (*models.Todo, error)
+	CreateInvoice(ctx context.Context, invoice models.NewInvoice) (*models.Invoice, error)
+	EditInvoice(ctx context.Context, invoice models.EditInvoice) (*models.Invoice, error)
+	DeleteInvoice(ctx context.Context, id string) (string, error)
+	CreateCustomer(ctx context.Context, customer models.NewCustomer) (*models.Customer, error)
+	EditCustomer(ctx context.Context, customer models.EditCustomer) (*models.Customer, error)
+	DeleteCustomer(ctx context.Context, id string) (string, error)
 }
 type QueryResolver interface {
-	Todos(ctx context.Context) ([]*models.Todo, error)
+	Invoices(ctx context.Context) ([]*models.Invoice, error)
+	Customers(ctx context.Context) ([]*models.Customer, error)
 }
 
 type executableSchema struct {
@@ -86,52 +133,273 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Mutation.createTodo":
-		if e.complexity.Mutation.CreateTodo == nil {
+	case "Customer.address":
+		if e.complexity.Customer.Address == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTodo_args(context.TODO(), rawArgs)
+		return e.complexity.Customer.Address(childComplexity), true
+
+	case "Customer.email":
+		if e.complexity.Customer.Email == nil {
+			break
+		}
+
+		return e.complexity.Customer.Email(childComplexity), true
+
+	case "Customer.id":
+		if e.complexity.Customer.ID == nil {
+			break
+		}
+
+		return e.complexity.Customer.ID(childComplexity), true
+
+	case "Customer.name":
+		if e.complexity.Customer.Name == nil {
+			break
+		}
+
+		return e.complexity.Customer.Name(childComplexity), true
+
+	case "Customer.phone":
+		if e.complexity.Customer.Phone == nil {
+			break
+		}
+
+		return e.complexity.Customer.Phone(childComplexity), true
+
+	case "Customer.taxId":
+		if e.complexity.Customer.TaxID == nil {
+			break
+		}
+
+		return e.complexity.Customer.TaxID(childComplexity), true
+
+	case "Invoice.date":
+		if e.complexity.Invoice.Date == nil {
+			break
+		}
+
+		return e.complexity.Invoice.Date(childComplexity), true
+
+	case "Invoice.from":
+		if e.complexity.Invoice.From == nil {
+			break
+		}
+
+		return e.complexity.Invoice.From(childComplexity), true
+
+	case "Invoice.id":
+		if e.complexity.Invoice.ID == nil {
+			break
+		}
+
+		return e.complexity.Invoice.ID(childComplexity), true
+
+	case "Invoice.identifier":
+		if e.complexity.Invoice.Identifier == nil {
+			break
+		}
+
+		return e.complexity.Invoice.Identifier(childComplexity), true
+
+	case "Invoice.items":
+		if e.complexity.Invoice.Items == nil {
+			break
+		}
+
+		return e.complexity.Invoice.Items(childComplexity), true
+
+	case "Invoice.to":
+		if e.complexity.Invoice.To == nil {
+			break
+		}
+
+		return e.complexity.Invoice.To(childComplexity), true
+
+	case "InvoiceItem.description":
+		if e.complexity.InvoiceItem.Description == nil {
+			break
+		}
+
+		return e.complexity.InvoiceItem.Description(childComplexity), true
+
+	case "InvoiceItem.id":
+		if e.complexity.InvoiceItem.ID == nil {
+			break
+		}
+
+		return e.complexity.InvoiceItem.ID(childComplexity), true
+
+	case "InvoiceItem.quantity":
+		if e.complexity.InvoiceItem.Quantity == nil {
+			break
+		}
+
+		return e.complexity.InvoiceItem.Quantity(childComplexity), true
+
+	case "InvoiceItem.unitPrice":
+		if e.complexity.InvoiceItem.UnitPrice == nil {
+			break
+		}
+
+		return e.complexity.InvoiceItem.UnitPrice(childComplexity), true
+
+	case "Mutation.createCustomer":
+		if e.complexity.Mutation.CreateCustomer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCustomer_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(models.NewTodo)), true
+		return e.complexity.Mutation.CreateCustomer(childComplexity, args["customer"].(models.NewCustomer)), true
 
-	case "Query.todos":
-		if e.complexity.Query.Todos == nil {
+	case "Mutation.createInvoice":
+		if e.complexity.Mutation.CreateInvoice == nil {
 			break
 		}
 
-		return e.complexity.Query.Todos(childComplexity), true
+		args, err := ec.field_Mutation_createInvoice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Todo.done":
-		if e.complexity.Todo.Done == nil {
+		return e.complexity.Mutation.CreateInvoice(childComplexity, args["invoice"].(models.NewInvoice)), true
+
+	case "Mutation.deleteCustomer":
+		if e.complexity.Mutation.DeleteCustomer == nil {
 			break
 		}
 
-		return e.complexity.Todo.Done(childComplexity), true
+		args, err := ec.field_Mutation_deleteCustomer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Todo.id":
-		if e.complexity.Todo.ID == nil {
+		return e.complexity.Mutation.DeleteCustomer(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteInvoice":
+		if e.complexity.Mutation.DeleteInvoice == nil {
 			break
 		}
 
-		return e.complexity.Todo.ID(childComplexity), true
+		args, err := ec.field_Mutation_deleteInvoice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Todo.text":
-		if e.complexity.Todo.Text == nil {
+		return e.complexity.Mutation.DeleteInvoice(childComplexity, args["id"].(string)), true
+
+	case "Mutation.editCustomer":
+		if e.complexity.Mutation.EditCustomer == nil {
 			break
 		}
 
-		return e.complexity.Todo.Text(childComplexity), true
+		args, err := ec.field_Mutation_editCustomer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Todo.user":
-		if e.complexity.Todo.User == nil {
+		return e.complexity.Mutation.EditCustomer(childComplexity, args["customer"].(models.EditCustomer)), true
+
+	case "Mutation.editInvoice":
+		if e.complexity.Mutation.EditInvoice == nil {
 			break
 		}
 
-		return e.complexity.Todo.User(childComplexity), true
+		args, err := ec.field_Mutation_editInvoice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditInvoice(childComplexity, args["invoice"].(models.EditInvoice)), true
+
+	case "Organization.address":
+		if e.complexity.Organization.Address == nil {
+			break
+		}
+
+		return e.complexity.Organization.Address(childComplexity), true
+
+	case "Organization.email":
+		if e.complexity.Organization.Email == nil {
+			break
+		}
+
+		return e.complexity.Organization.Email(childComplexity), true
+
+	case "Organization.id":
+		if e.complexity.Organization.ID == nil {
+			break
+		}
+
+		return e.complexity.Organization.ID(childComplexity), true
+
+	case "Organization.name":
+		if e.complexity.Organization.Name == nil {
+			break
+		}
+
+		return e.complexity.Organization.Name(childComplexity), true
+
+	case "Organization.phone":
+		if e.complexity.Organization.Phone == nil {
+			break
+		}
+
+		return e.complexity.Organization.Phone(childComplexity), true
+
+	case "Organization.roles":
+		if e.complexity.Organization.Roles == nil {
+			break
+		}
+
+		return e.complexity.Organization.Roles(childComplexity), true
+
+	case "Organization.taxId":
+		if e.complexity.Organization.TaxID == nil {
+			break
+		}
+
+		return e.complexity.Organization.TaxID(childComplexity), true
+
+	case "Query.customers":
+		if e.complexity.Query.Customers == nil {
+			break
+		}
+
+		return e.complexity.Query.Customers(childComplexity), true
+
+	case "Query.invoices":
+		if e.complexity.Query.Invoices == nil {
+			break
+		}
+
+		return e.complexity.Query.Invoices(childComplexity), true
+
+	case "Role.access":
+		if e.complexity.Role.Access == nil {
+			break
+		}
+
+		return e.complexity.Role.Access(childComplexity), true
+
+	case "Role.user":
+		if e.complexity.Role.User == nil {
+			break
+		}
+
+		return e.complexity.Role.User(childComplexity), true
+
+	case "User.email":
+		if e.complexity.User.Email == nil {
+			break
+		}
+
+		return e.complexity.User.Email(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -224,51 +492,245 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var parsedSchema = gqlparser.MustLoadSchema(
-	&ast.Source{Name: "schema.graphql", Input: `# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
+	&ast.Source{Name: "schema.graphql", Input: `# Schema definitions for lazy-invoice GraphQL API.
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
+# TODO: authentication, authorization, audit tables, de-normalized
+# generated past invoices, more mutations and more queries.
 
-type User {
-  id: ID!
-  name: String!
-}
+scalar Time
 
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  invoices: [Invoice!]!
+  customers: [Customer!]!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
-}`},
+  createInvoice(invoice: NewInvoice!): Invoice!
+  editInvoice(invoice: EditInvoice!): Invoice!
+  deleteInvoice(id: ID!): ID!
+  createCustomer(customer: NewCustomer!): Customer!
+  editCustomer(customer: EditCustomer!): Customer!
+  deleteCustomer(id: ID!): ID!
+  # TODO: organization creation, AKA registration.
+}
+
+# Invoice represents a single invoice. TODO: Add audit trail for who,
+# when, what. This applies to all relevant models.
+type Invoice {
+  id: ID!
+  # A user provided string identifier to display at the invoice.
+  identifier: String!
+  # Timestamp for display at the invoice.
+  date: Time!
+  # Organization that issues the invoice.
+  from: Organization!
+  # Recipient for the invoice.
+  to: Customer!
+  items: [InvoiceItem!]!
+}
+
+# InvoiceItem represents an item described in a given invoice.
+type InvoiceItem {
+  id: ID!
+  # Human readable description, may also contain the unit
+  # specification (hour, kilograms, etc).
+  description: String!
+  # Decimal value for unitary price.
+  unitPrice: String!
+  # Decimal value for the quantity.
+  quantity: String!
+}
+
+# Organization represents the relevant metadata for an issuer of an
+# invoice. It may have one or more users assigned to different roles.
+type Organization {
+  id: ID!
+  address: String!
+  email: String!
+  # TODO: add logo
+  name: String!
+  phone: String!
+  roles: [Role!]!
+  taxId: String!
+}
+
+# User describes the User metadata.
+type User {
+  id: ID!
+  email: String!
+  name: String!
+}
+
+# RoleAccess describes the different role access level that exist on
+# the system.
+enum RoleAccess {
+  ADMIN
+  READ
+  WRITE
+}
+
+# Role maps an access level to a user.
+type Role {
+  user: User!
+  access: RoleAccess!
+}
+
+# Customer represents the relevant metadata for a recipient of an
+# invoice.
+type Customer {
+  id: ID!
+  address: String!
+  email: String!
+  name: String!
+  phone: String!
+  taxId: String!
+}
+
+# NewCustomer describes the required input to create new customers.
+input NewCustomer {
+  address: String!
+  email: String!
+  name: String!
+  phone: String!
+  taxId: String!
+}
+
+# EditCustomer describes the required input to update a customer.
+input EditCustomer {
+  id: ID!
+  address: String
+  email: String
+  name: String
+  phone: String
+  taxId: String
+}
+
+# NewInvoice describes the required input to create new invoices.
+input NewInvoice {
+  # Human readable free form identifier for the invoice.
+  identifier: String!
+  # XXX: it'd be great to be able to define a customer ID or a
+  # customer object to create but input unions are still being
+  # defined: https://github.com/graphql/graphql-spec/issues/488
+  customerId: ID!
+  date: Time!
+  organizationId: ID!
+  items: [NewInvoiceItem!]!
+}
+
+# NewInvoiceItem describes the required input items of a new invoice.
+input NewInvoiceItem {
+  # Human readable description, may also contain the unit
+  # specification (hour, kilograms, etc).
+  description: String!
+  # Decimal value for unitary price.
+  unitPrice: String!
+  # Decimal value for the quantity.
+  quantity: String!
+}
+
+# EditInvoice describes the required input for editing an
+# invoice. Values are optional an no value means no change.
+input EditInvoice {
+  id: ID!
+  # Human readable free form identifier for the invoice.
+  identifier: String
+  # XXX: it'd be great to be able to define a customer ID or a
+  # customer object to create but input unions are still being
+  # defined: https://github.com/graphql/graphql-spec/issues/488
+  customerId: ID
+  date: Time
+  organizationId: ID
+  items: [NewInvoiceItem!]
+}
+`},
 )
 
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.NewTodo
-	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNNewTodo2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewTodo(ctx, tmp)
+	var arg0 models.NewCustomer
+	if tmp, ok := rawArgs["customer"]; ok {
+		arg0, err = ec.unmarshalNNewCustomer2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewCustomer(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["customer"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createInvoice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.NewInvoice
+	if tmp, ok := rawArgs["invoice"]; ok {
+		arg0, err = ec.unmarshalNNewInvoice2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoice(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["invoice"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteInvoice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditCustomer
+	if tmp, ok := rawArgs["customer"]; ok {
+		arg0, err = ec.unmarshalNEditCustomer2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐEditCustomer(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["customer"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editInvoice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditInvoice
+	if tmp, ok := rawArgs["invoice"]; ok {
+		arg0, err = ec.unmarshalNEditInvoice2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐEditInvoice(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["invoice"] = arg0
 	return args, nil
 }
 
@@ -318,7 +780,439 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Customer_id(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Customer_address(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Address, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Customer_email(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Customer_name(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Customer_phone(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Phone, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Customer_taxId(ctx context.Context, field graphql.CollectedField, obj *models.Customer) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Customer",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaxID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_id(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_identifier(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Identifier, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_date(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_from(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.From, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Organization)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_to(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.To, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Customer)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNCustomer2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Invoice_items(ctx context.Context, field graphql.CollectedField, obj *models.Invoice) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Invoice",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.InvoiceItem)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoiceItem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceItem_id(ctx context.Context, field graphql.CollectedField, obj *models.InvoiceItem) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "InvoiceItem",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceItem_description(ctx context.Context, field graphql.CollectedField, obj *models.InvoiceItem) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "InvoiceItem",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceItem_unitPrice(ctx context.Context, field graphql.CollectedField, obj *models.InvoiceItem) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "InvoiceItem",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UnitPrice, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InvoiceItem_quantity(ctx context.Context, field graphql.CollectedField, obj *models.InvoiceItem) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "InvoiceItem",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Quantity, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createInvoice(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -329,7 +1223,7 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createTodo_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_createInvoice_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -338,7 +1232,7 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTodo(rctx, args["input"].(models.NewTodo))
+		return ec.resolvers.Mutation().CreateInvoice(rctx, args["invoice"].(models.NewInvoice))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -346,13 +1240,372 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Todo)
+	res := resTmp.(*models.Invoice)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTodo2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNInvoice2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Mutation_editInvoice(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editInvoice_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditInvoice(rctx, args["invoice"].(models.EditInvoice))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Invoice)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNInvoice2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteInvoice(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteInvoice_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteInvoice(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createCustomer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createCustomer_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateCustomer(rctx, args["customer"].(models.NewCustomer))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Customer)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNCustomer2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editCustomer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editCustomer_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditCustomer(rctx, args["customer"].(models.EditCustomer))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Customer)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNCustomer2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteCustomer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteCustomer_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteCustomer(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_id(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_address(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Address, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_email(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_name(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_phone(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Phone, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_roles(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Roles, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Role)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNRole2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_taxId(ctx context.Context, field graphql.CollectedField, obj *models.Organization) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Organization",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaxID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_invoices(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -365,7 +1618,7 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Todos(rctx)
+		return ec.resolvers.Query().Invoices(rctx)
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -373,10 +1626,37 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*models.Todo)
+	res := resTmp.([]*models.Invoice)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTodo2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNInvoice2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_customers(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Customers(rctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Customer)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNCustomer2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -434,92 +1714,11 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Todo_id(ctx context.Context, field graphql.CollectedField, obj *models.Todo) graphql.Marshaler {
+func (ec *executionContext) _Role_user(ctx context.Context, field graphql.CollectedField, obj *models.Role) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object:   "Todo",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Todo_text(ctx context.Context, field graphql.CollectedField, obj *models.Todo) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object:   "Todo",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Text, nil
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Todo_done(ctx context.Context, field graphql.CollectedField, obj *models.Todo) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object:   "Todo",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Done, nil
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Todo_user(ctx context.Context, field graphql.CollectedField, obj *models.Todo) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rctx := &graphql.ResolverContext{
-		Object:   "Todo",
+		Object:   "Role",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -540,6 +1739,33 @@ func (ec *executionContext) _Todo_user(ctx context.Context, field graphql.Collec
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNUser2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Role_access(ctx context.Context, field graphql.CollectedField, obj *models.Role) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Role",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Access, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.RoleAccess)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNRoleAccess2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRoleAccess(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
@@ -567,6 +1793,33 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *models.User) graphql.Marshaler {
@@ -1427,21 +2680,207 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, v interface{}) (models.NewTodo, error) {
-	var it models.NewTodo
+func (ec *executionContext) unmarshalInputEditCustomer(ctx context.Context, v interface{}) (models.EditCustomer, error) {
+	var it models.EditCustomer
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "text":
+		case "id":
 			var err error
-			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "userId":
+		case "address":
 			var err error
-			it.UserID, err = ec.unmarshalNString2string(ctx, v)
+			it.Address, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+			it.Email, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "phone":
+			var err error
+			it.Phone, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "taxId":
+			var err error
+			it.TaxID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditInvoice(ctx context.Context, v interface{}) (models.EditInvoice, error) {
+	var it models.EditInvoice
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "identifier":
+			var err error
+			it.Identifier, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "customerId":
+			var err error
+			it.CustomerID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "date":
+			var err error
+			it.Date, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationId":
+			var err error
+			it.OrganizationID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "items":
+			var err error
+			it.Items, err = ec.unmarshalONewInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputNewCustomer(ctx context.Context, v interface{}) (models.NewCustomer, error) {
+	var it models.NewCustomer
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "address":
+			var err error
+			it.Address, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "phone":
+			var err error
+			it.Phone, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "taxId":
+			var err error
+			it.TaxID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputNewInvoice(ctx context.Context, v interface{}) (models.NewInvoice, error) {
+	var it models.NewInvoice
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "identifier":
+			var err error
+			it.Identifier, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "customerId":
+			var err error
+			it.CustomerID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "date":
+			var err error
+			it.Date, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationId":
+			var err error
+			it.OrganizationID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "items":
+			var err error
+			it.Items, err = ec.unmarshalNNewInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputNewInvoiceItem(ctx context.Context, v interface{}) (models.NewInvoiceItem, error) {
+	var it models.NewInvoiceItem
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "unitPrice":
+			var err error
+			it.UnitPrice, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "quantity":
+			var err error
+			it.Quantity, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1459,6 +2898,152 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, v interfa
 
 // region    **************************** object.gotpl ****************************
 
+var customerImplementors = []string{"Customer"}
+
+func (ec *executionContext) _Customer(ctx context.Context, sel ast.SelectionSet, obj *models.Customer) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, customerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Customer")
+		case "id":
+			out.Values[i] = ec._Customer_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "address":
+			out.Values[i] = ec._Customer_address(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "email":
+			out.Values[i] = ec._Customer_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Customer_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "phone":
+			out.Values[i] = ec._Customer_phone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "taxId":
+			out.Values[i] = ec._Customer_taxId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var invoiceImplementors = []string{"Invoice"}
+
+func (ec *executionContext) _Invoice(ctx context.Context, sel ast.SelectionSet, obj *models.Invoice) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, invoiceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Invoice")
+		case "id":
+			out.Values[i] = ec._Invoice_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "identifier":
+			out.Values[i] = ec._Invoice_identifier(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "date":
+			out.Values[i] = ec._Invoice_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "from":
+			out.Values[i] = ec._Invoice_from(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "to":
+			out.Values[i] = ec._Invoice_to(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "items":
+			out.Values[i] = ec._Invoice_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var invoiceItemImplementors = []string{"InvoiceItem"}
+
+func (ec *executionContext) _InvoiceItem(ctx context.Context, sel ast.SelectionSet, obj *models.InvoiceItem) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, invoiceItemImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InvoiceItem")
+		case "id":
+			out.Values[i] = ec._InvoiceItem_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._InvoiceItem_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "unitPrice":
+			out.Values[i] = ec._InvoiceItem_unitPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "quantity":
+			out.Values[i] = ec._InvoiceItem_quantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -1474,8 +3059,90 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createTodo":
-			out.Values[i] = ec._Mutation_createTodo(ctx, field)
+		case "createInvoice":
+			out.Values[i] = ec._Mutation_createInvoice(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editInvoice":
+			out.Values[i] = ec._Mutation_editInvoice(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteInvoice":
+			out.Values[i] = ec._Mutation_deleteInvoice(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createCustomer":
+			out.Values[i] = ec._Mutation_createCustomer(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editCustomer":
+			out.Values[i] = ec._Mutation_editCustomer(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteCustomer":
+			out.Values[i] = ec._Mutation_deleteCustomer(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var organizationImplementors = []string{"Organization"}
+
+func (ec *executionContext) _Organization(ctx context.Context, sel ast.SelectionSet, obj *models.Organization) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, organizationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Organization")
+		case "id":
+			out.Values[i] = ec._Organization_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "address":
+			out.Values[i] = ec._Organization_address(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "email":
+			out.Values[i] = ec._Organization_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Organization_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "phone":
+			out.Values[i] = ec._Organization_phone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "roles":
+			out.Values[i] = ec._Organization_roles(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "taxId":
+			out.Values[i] = ec._Organization_taxId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -1505,7 +3172,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "todos":
+		case "invoices":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -1513,7 +3180,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_todos(ctx, field)
+				res = ec._Query_invoices(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "customers":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_customers(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -1534,34 +3215,24 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var todoImplementors = []string{"Todo"}
+var roleImplementors = []string{"Role"}
 
-func (ec *executionContext) _Todo(ctx context.Context, sel ast.SelectionSet, obj *models.Todo) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.RequestContext, sel, todoImplementors)
+func (ec *executionContext) _Role(ctx context.Context, sel ast.SelectionSet, obj *models.Role) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.RequestContext, sel, roleImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Todo")
-		case "id":
-			out.Values[i] = ec._Todo_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "text":
-			out.Values[i] = ec._Todo_text(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "done":
-			out.Values[i] = ec._Todo_done(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			out.Values[i] = graphql.MarshalString("Role")
 		case "user":
-			out.Values[i] = ec._Todo_user(ctx, field, obj)
+			out.Values[i] = ec._Role_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "access":
+			out.Values[i] = ec._Role_access(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -1589,6 +3260,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("User")
 		case "id":
 			out.Values[i] = ec._User_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "email":
+			out.Values[i] = ec._User_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -1867,43 +3543,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	return graphql.UnmarshalID(v)
+func (ec *executionContext) marshalNCustomer2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx context.Context, sel ast.SelectionSet, v models.Customer) graphql.Marshaler {
+	return ec._Customer(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
-	if res == graphql.Null {
-		if !ec.HasError(graphql.GetResolverContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewTodo(ctx context.Context, v interface{}) (models.NewTodo, error) {
-	return ec.unmarshalInputNewTodo(ctx, v)
-}
-
-func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
-	return graphql.UnmarshalString(v)
-}
-
-func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalString(v)
-	if res == graphql.Null {
-		if !ec.HasError(graphql.GetResolverContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) marshalNTodo2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx context.Context, sel ast.SelectionSet, v models.Todo) graphql.Marshaler {
-	return ec._Todo(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx context.Context, sel ast.SelectionSet, v []*models.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNCustomer2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx context.Context, sel ast.SelectionSet, v []*models.Customer) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -1927,7 +3571,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋunderthebusᚋlazy
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTodo2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx, sel, v[i])
+			ret[i] = ec.marshalNCustomer2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -1940,14 +3584,280 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋunderthebusᚋlazy
 	return ret
 }
 
-func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐTodo(ctx context.Context, sel ast.SelectionSet, v *models.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNCustomer2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐCustomer(ctx context.Context, sel ast.SelectionSet, v *models.Customer) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._Todo(ctx, sel, v)
+	return ec._Customer(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNEditCustomer2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐEditCustomer(ctx context.Context, v interface{}) (models.EditCustomer, error) {
+	return ec.unmarshalInputEditCustomer(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNEditInvoice2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐEditInvoice(ctx context.Context, v interface{}) (models.EditInvoice, error) {
+	return ec.unmarshalInputEditInvoice(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalID(v)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) marshalNInvoice2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx context.Context, sel ast.SelectionSet, v models.Invoice) graphql.Marshaler {
+	return ec._Invoice(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNInvoice2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx context.Context, sel ast.SelectionSet, v []*models.Invoice) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInvoice2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNInvoice2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoice(ctx context.Context, sel ast.SelectionSet, v *models.Invoice) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Invoice(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNInvoiceItem2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoiceItem(ctx context.Context, sel ast.SelectionSet, v models.InvoiceItem) graphql.Marshaler {
+	return ec._InvoiceItem(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoiceItem(ctx context.Context, sel ast.SelectionSet, v []*models.InvoiceItem) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInvoiceItem2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoiceItem(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNInvoiceItem2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐInvoiceItem(ctx context.Context, sel ast.SelectionSet, v *models.InvoiceItem) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._InvoiceItem(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNNewCustomer2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewCustomer(ctx context.Context, v interface{}) (models.NewCustomer, error) {
+	return ec.unmarshalInputNewCustomer(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNNewInvoice2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoice(ctx context.Context, v interface{}) (models.NewInvoice, error) {
+	return ec.unmarshalInputNewInvoice(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNNewInvoiceItem2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx context.Context, v interface{}) (models.NewInvoiceItem, error) {
+	return ec.unmarshalInputNewInvoiceItem(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNNewInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx context.Context, v interface{}) ([]*models.NewInvoiceItem, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.NewInvoiceItem, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNNewInvoiceItem2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNNewInvoiceItem2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx context.Context, v interface{}) (*models.NewInvoiceItem, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNNewInvoiceItem2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalNOrganization2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐOrganization(ctx context.Context, sel ast.SelectionSet, v models.Organization) graphql.Marshaler {
+	return ec._Organization(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganization2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *models.Organization) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Organization(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRole2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRole(ctx context.Context, sel ast.SelectionSet, v models.Role) graphql.Marshaler {
+	return ec._Role(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRole2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRole(ctx context.Context, sel ast.SelectionSet, v []*models.Role) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		rctx := &graphql.ResolverContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRole2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRole(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNRole2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRole(ctx context.Context, sel ast.SelectionSet, v *models.Role) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Role(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRoleAccess2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRoleAccess(ctx context.Context, v interface{}) (models.RoleAccess, error) {
+	var res models.RoleAccess
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNRoleAccess2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐRoleAccess(ctx context.Context, sel ast.SelectionSet, v models.RoleAccess) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalString(v)
+}
+
+func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	return graphql.UnmarshalTime(v)
+}
+
+func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {
@@ -2213,6 +4123,49 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
+func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalID(v)
+}
+
+func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return graphql.MarshalID(v)
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOID2string(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOID2string(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalONewInvoiceItem2ᚕᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx context.Context, v interface{}) ([]*models.NewInvoiceItem, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.NewInvoiceItem, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNNewInvoiceItem2ᚖgithubᚗcomᚋunderthebusᚋlazyᚑinvoiceᚋbackendᚋmodelsᚐNewInvoiceItem(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalString(v)
 }
@@ -2234,6 +4187,29 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return ec.marshalOString2string(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	return graphql.UnmarshalTime(v)
+}
+
+func (ec *executionContext) marshalOTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	return graphql.MarshalTime(v)
+}
+
+func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOTime2timeᚐTime(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOTime2timeᚐTime(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValue(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
