@@ -1,0 +1,7 @@
+---
+matrix:
+  include:
+  -
+    language: node_js
+    node_js:
+      - "10"
