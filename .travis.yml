@@ -2,6 +2,8 @@
 matrix:
   include:
   -
+    addons:
+      chrome: stable
     before_install: cd frontend
     language: node_js
     node_js:
