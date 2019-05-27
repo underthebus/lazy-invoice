@@ -2,7 +2,7 @@
 matrix:
   include:
   -
-    before_script: cd frontend
+    before_install: cd frontend
     language: node_js
     node_js:
       - "10"
