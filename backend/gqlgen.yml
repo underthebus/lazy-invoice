@@ -1,0 +1,16 @@
+# .gqlgen.yml example
+#
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+
+schema:
+- schema.graphql
+exec:
+  filename: graphql/generated.go
+  package: graphql
+model:
+  filename: models/generated.go
+resolver:
+  filename: graphql/resolver.go
+  package: graphql
+  type: Resolver
