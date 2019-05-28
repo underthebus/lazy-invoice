@@ -8,10 +8,10 @@ const presets = [
     '@babel/env',
     {
       useBuiltIns: 'usage',
-      corejs: '3.1.2'
-    }
+      corejs: '3.1.2',
+    },
 
-  ]
+  ],
 ];
 
 module.exports = { presets, plugins };
