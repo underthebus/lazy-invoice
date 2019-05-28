@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import gql from 'graphql-tag';
 import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
 import { HttpLink } from 'apollo-link-http';
@@ -16,25 +15,8 @@ const link = new HttpLink({
 
 const client = new ApolloClient({
   cache,
-  link
+  link,
 });
-
-client
-  .query({
-    query: gql`
-      query GetInvoices {
-        invoices {
-          date
-          items {
-            description
-            quantity
-            unitPrice
-            }
-          }
-        }
-      `
-  })
-  .then(result => console.log(result)); // eslint-disable-line no-console
 
 ReactDOM.render(
   <ApolloProvider client={client}>
