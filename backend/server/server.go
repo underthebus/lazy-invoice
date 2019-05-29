@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/handler"
+	"github.com/go-chi/chi"
+	"github.com/rs/cors"
 	"github.com/underthebus/lazy-invoice/backend/graphql"
 	"github.com/underthebus/lazy-invoice/backend/store"
 )
@@ -18,9 +20,17 @@ func main() {
 		port = defaultPort
 	}
 
-	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
+	router := chi.NewRouter()
+
+	router.Use(cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+		Debug:            true,
+	}).Handler)
+
+	router.Handle("/", handler.Playground("GraphQL playground", "/query"))
 	store := store.NewInMemoryStore()
-	http.Handle(
+	router.Handle(
 		"/query",
 		handler.GraphQL(
 			graphql.NewExecutableSchema(
@@ -32,5 +42,10 @@ func main() {
 	)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	//log.Fatal(http.ListenAndServe(":"+port, nil))
+
+	err := http.ListenAndServe(":"+port, router)
+	if err != nil {
+		panic(err)
+	}
 }
