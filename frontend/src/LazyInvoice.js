@@ -14,14 +14,14 @@ const GET_INVOICES = gql`
             unitPrice
           }
         }
+        user @client {
+          name
+        }
       }
 `;
 
 export const Component = () =>
   <div>
-    <div data-e2e="example">
-      Hello Feibian!
-    </div>
     <Query query={GET_INVOICES}>
       {({ data, loading, error }) => {
         if (loading) return <div>Loading ...</div>;
@@ -29,6 +29,9 @@ export const Component = () =>
 
         return (
           <div>
+            <div data-e2e="example">
+              Hello {data.user.name}!
+            </div>
             {data.invoices.map((invoice, i) =>
               <div key={i}>
                 {`Invoice date: ${format(invoice.date, 'd MMMM, YYYY' )}`}

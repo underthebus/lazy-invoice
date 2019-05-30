@@ -16,6 +16,18 @@ const link = new HttpLink({
 const client = new ApolloClient({
   cache,
   link,
+  resolvers: {
+    Query: {
+      user: () => ({ __typename: 'User', name: 'Feibian' }),
+    },
+  },
+  typeDefs: `
+    type Query {
+      user: {
+        name: String
+      }
+    }
+  `,
 });
 
 ReactDOM.render(
