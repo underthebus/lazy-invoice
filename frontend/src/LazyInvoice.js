@@ -4,6 +4,8 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { format } from 'date-fns';
 
+import './LazyInvoice.css';
+
 const GET_INVOICES = gql`
       query GetInvoices {
         invoices {
@@ -18,7 +20,7 @@ const GET_INVOICES = gql`
 `;
 
 export const Component = () =>
-  <div>
+  <div className="ub-LazyInvoice">
     <div data-e2e="example">
       Hello Feibian!
     </div>
