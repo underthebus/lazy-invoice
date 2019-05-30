@@ -6,7 +6,7 @@ git:
 notifications:
   email: false
 script:
-  - go run server/server.go
+  - go run backend/server/server.go
 
 
 matrix:
