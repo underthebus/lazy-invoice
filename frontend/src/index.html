@@ -3,6 +3,34 @@
   <head>
     <meta charset="utf-8">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:300,400,700,800&display=swap" rel="stylesheet">
+
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+
+      html {
+         box-sizing: border-box;
+      }
+
+      body {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+        color: #333;
+        background: #f3f9fc;
+      }
+
+      body, td, a, p {
+        font-family: 'Merriweather Sans', sans-serif;
+      }
+
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
