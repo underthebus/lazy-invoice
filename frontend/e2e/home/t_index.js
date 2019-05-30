@@ -4,6 +4,6 @@ fixture `Getting Started`
   .page `http://localhost:8080`;
 
 test('Test home page renders in dev environment', async t => {
-  const exampleEl = Selector('[data-e2e="example"]');
-  await t.expect(exampleEl.innerText).eql('Hello Feibian!', '', { timeout: 1000 });
+  const exampleEl = Selector('[data-e2e="example"]', { timeout: 1000 });
+  await t.expect(exampleEl.innerText).eql('Hello Feibian!');
 });
