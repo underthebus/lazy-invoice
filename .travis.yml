@@ -1,20 +1,15 @@
 ---
-language: go
-dist: xenial
-git:
-  depth: 1
-notifications:
-  email: false
-script:
-  - go run backend/server/server.go
-
-
 matrix:
   include:
   -
+    language: go
+    before_install: cd backend
+    script:
+      - go run server/server.go
+  -
+    language: node_js
     addons:
       chrome: stable
     before_install: cd frontend
-    language: node_js
     node_js:
       - "10"
