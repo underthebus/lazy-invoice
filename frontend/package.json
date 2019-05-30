@@ -8,7 +8,7 @@
     "test": "run-s -sn test:**",
     "test:lint": "eslint .",
     "test:unit": "jest",
-    "test:e2e": "testcafe -a webpack-dev-server \"chrome:headless\" e2e/**",
+    "test:e2e": "testcafe -a \"webpack-dev-server --env.development\" \"chrome:headless\" e2e/**",
     "build": "webpack --env.production --progress"
   },
   "dependencies": {
