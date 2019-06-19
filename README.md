@@ -4,7 +4,7 @@
 cd backend/
 go run server/server.go
 ```
-It'll serve the GraphQL browser console at http://localhost:8080/
+It'll serve the GraphQL browser console at http://localhost:8081/
 
 ```
 cd frontend/
